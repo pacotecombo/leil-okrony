@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kron Leilões</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #fafafa;
+            color: #555;
+        }
+
+        nav {
+            background: white;
+            padding: 18px 40px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav img {
+            height: 50px;
+        }
+
+        #menu {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        #menu span {
+            width: 28px;
+            height: 2.5px;
+            background: #e67e22;
+            border-radius: 2px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 25px;
+        }
+
+        header {
+            width: 100%;
+            margin: 25px 0;
+        }
+
+        header img {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+
+        .titulo-secao {
+            font-size: 30px;
+            margin: 40px 0 30px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        #grid-leiloes {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 50px;
+        }
+
+        .card-leilao {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .card-leilao:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        }
+
+        .card-leilao img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .card-info {
+            padding: 20px;
+        }
+
+        .card-info .lote {
+            color: #aaa;
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .card-info h3 {
+            color: #444;
+            font-size: 17px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .card-info .lance-inicial {
+            color: #e67e22;
+            font-size: 24px;
+            font-weight: 700;
+            margin: 10px 0 8px;
+        }
+
+        .card-info .lance-minimo {
+            color: #999;
+            font-size: 12px;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .card-info .local {
+            color: #888;
+            font-size: 13px;
+            margin-bottom: 15px;
+        }
+
+        .btn-ver-leilao {
+            background: #e67e22;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 14px;
+            border: none;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-ver-leilao:hover {
+            background: #d35400;
+        }
+
+        #pagina-produto {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #fafafa;
+            z-index: 2000;
+            overflow-y: auto;
+        }
+
+        .header-produto {
+            background: white;
+            padding: 18px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .btn-voltar {
+            background: white;
+            color: #555;
+            padding: 10px 20px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-voltar:hover {
+            border-color: #e67e22;
+            color: #e67e22;
+        }
+
+        .container-produto {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 25px;
+        }
+
+        .galeria-container {
+            margin-bottom: 40px;
+        }
+
+        .foto-principal {
+            width: 100%;
+            height: 500px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .foto-principal img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .miniaturas {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 15px;
+        }
+
+        .miniatura {
+            height: 100px;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .miniatura:hover {
+            border-color: #e67e22;
+        }
+
+        .miniatura.ativa {
+            border-color: #e67e22;
+        }
+
+        .miniatura img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .info-produto {
+            display: grid;
+            grid-template-columns: 1.7fr 1fr;
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .descricao-produto {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .descricao-produto h1 {
+            color: #333;
+            font-size: 26px;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .descricao-produto .lote-info {
+            color: #aaa;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .descricao-produto .descricao-texto {
+            color: #666;
+            line-height: 1.7;
+            font-size: 14px;
+        }
+
+        .descricao-produto .descricao-texto ul {
+            margin: 15px 0 15px 25px;
+        }
+
+        .descricao-produto .descricao-texto li {
+            margin: 8px 0;
+            color: #555;
+        }
+
+        .descricao-produto .local-info {
+            color: #888;
+            font-size: 14px;
+            font-weight: 500;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .painel-lances {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        .lance-atual-box {
+            background: #2c3e50;
+            padding: 25px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .lance-atual-box .label {
+            color: rgba(255,255,255,0.7);
+            font-size: 11px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .lance-atual-box .valor {
+            color: white;
+            font-size: 34px;
+            font-weight: 800;
+        }
+
+        .lance-atual-box .usuario {
+            color: rgba(255,255,255,0.6);
+            font-size: 11px;
+            margin-top: 10px;
+        }
+
+        .lance-inicial-box {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+
+        .lance-inicial-box .label {
+            color: #888;
+            font-size: 11px;
+            margin-bottom: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .lance-inicial-box .valor {
+            color: #e67e22;
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .opcoes-lance {
+            margin-bottom: 25px;
+        }
+
+        .opcoes-lance h3 {
+            color: #444;
+            font-size: 15px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .grid-opcoes {
+            display: grid;
+            gap: 10px;
+        }
+
+        .btn-opcao-lance {
+            background: white;
+            color: #555;
+            padding: 16px;
+            border-radius: 8px;
+            border: 1.5px solid #e0e0e0;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .btn-opcao-lance:hover {
+            border-color: #e67e22;
+            background: #fff9f5;
+            color: #e67e22;
+        }
+
+        .status-leilao {
+            background: #27ae60;
+            color: white;
+            padding: 12px;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: 600;
+            margin-top: 20px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .faq-section {
+            margin: 70px 0;
+        }
+
+        .faq-titulo {
+            font-size: 26px;
+            color: #333;
+            margin-bottom: 25px;
+            font-weight: 600;
+        }
+
+        .question {
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+            transition: all 0.2s;
+        }
+
+        .question:hover {
+            box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+        }
+
+        .question input {
+            display: none;
+        }
+
+        .question label {
+            display: block;
+            padding: 18px 22px;
+            font-weight: 600;
+            cursor: pointer;
+            color: #555;
+            font-size: 14px;
+        }
+
+        .question label:hover {
+            color: #e67e22;
+        }
+
+        .question .answer {
+            display: none;
+            padding: 0 22px 18px;
+            color: #777;
+            line-height: 1.7;
+            font-size: 13px;
+        }
+
+        .question input:checked ~ .answer {
+            display: block;
+        }
+
+        .question input:checked ~ label {
+            color: #e67e22;
+        }
+
+        footer {
+            background: white;
+            color: #888;
+            padding: 50px 25px 35px;
+            text-align: center;
+            margin-top: 80px;
+            box-shadow: 0 -1px 3px rgba(0,0,0,0.04);
+        }
+
+        footer img {
+            height: 50px;
+            margin-bottom: 25px;
+        }
+
+        footer p {
+            line-height: 1.7;
+            margin: 15px 0;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            font-size: 13px;
+        }
+
+        .links-footer {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid #eee;
+        }
+
+        .links-footer a {
+            color: #e67e22;
+            text-decoration: none;
+            transition: all 0.2s;
+            font-weight: 500;
+            font-size: 13px;
+        }
+
+        .links-footer a:hover {
+            color: #d35400;
+        }
+
+        @media (max-width: 968px) {
+            .info-produto {
+                grid-template-columns: 1fr;
+            }
+
+            .foto-principal {
+                height: 350px;
+            }
+
+            #grid-leiloes {
+                grid-template-columns: 1fr;
+            }
+
+            .painel-lances {
+                position: relative;
+                top: 0;
+            }
+
+            nav {
+                padding: 15px 20px;
+            }
+
+            .titulo-secao {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <img src="logoKron2.png" alt="Kron Leilões">
+        <div id="menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+
+    <div id="pagina-principal">
+        <main class="container">
+            <header>
+                <img src="heder.png" alt="Banner Kron Leilões">
+            </header>
+
+            <h1 class="titulo-secao">Leilões em Destaque</h1>
+
+            <div id="grid-leiloes"></div>
+
+            <section class="faq-section">
+                <h2 class="faq-titulo">Perguntas Frequentes</h2>
+
+                <div class='question'>
+                    <input type='checkbox' id='question-1'>
+                    <label for='question-1'>Como funciona o nosso leilão?</label>
+                    <div class='answer'>
+                        O usuário escolhe o valor do lance que deseja dar e entra em contato com nosso suporte pelo WhatsApp. O suporte registra o lance no sistema e confirma para o usuário.
+                    </div>
+                </div>
+
+                <div class='question'>
+                    <input type='checkbox' id='question-2'>
+                    <label for='question-2'>Por que o lance é feito pelo suporte?</label>
+                    <div class='answer'>
+                        Esse modelo garante mais segurança, evita lances falsos e mantém o controle total do leilão em tempo real.
+                    </div>
+                </div>
+
+                <div class='question'>
+                    <input type='checkbox' id='question-3'>
+                    <label for='question-3'>Nosso leilão é confiável?</label>
+                    <div class='answer'>
+                        Sim. Todos os lances são registrados pelo suporte e ficam documentados, garantindo transparência para todos.
+                    </div>
+                </div>
+
+                <div class='question'>
+                    <input type='checkbox' id='question-4'>
+                    <label for='question-4'>Qual o prazo ideal do leilão?</label>
+                    <div class='answer'>
+                        O prazo recomendado é de 3 a 7 dias, tempo suficiente para gerar disputa e bons lances.
+                    </div>
+                </div>
+
+                <div class='question'>
+                    <input type='checkbox' id='question-5'>
+                    <label for='question-5'>O que acontece se eu ganhar o leilão?</label>
+                    <div class='answer'>
+                        O suporte entra em contato, passa as instruções de pagamento e acompanha todo o processo até a finalização.
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <img src="logoKron2.png" alt="Kron Leilões">
+            <p>Kron Leilões - Leilão Judicial e Extrajudicial Online de Veículos, Imóveis, Máquinas, Equipamentos, Bens Móveis e Bens Diversos.</p>
+            <p>2026 Kron Leilões - Rua Andre de Barros 226, 15º andar, Curitiba/PR</p>
+            <div class="links-footer">
+                <a href="#">Privacidade</a>
+                <a href="#">Segurança</a>
+                <a href="#">Cookies</a>
+            </div>
+        </footer>
+    </div>
+
+    <div id="pagina-produto">
+        <div class="header-produto">
+            <img src="logoKron2.png" alt="Kron Leilões" style="height: 42px;">
+            <button class="btn-voltar" onclick="voltarInicio()">← Voltar</button>
+        </div>
+
+        <div class="container-produto">
+            <div class="galeria-container">
+                <div class="foto-principal">
+                    <img id="foto-principal" src="" alt="Produto">
+                </div>
+                <div class="miniaturas" id="miniaturas"></div>
+            </div>
+
+            <div class="info-produto">
+                <div class="descricao-produto">
+                    <h1 id="titulo-produto"></h1>
+                    <div class="lote-info" id="lote-produto"></div>
+                    <div class="descricao-texto" id="descricao-produto"></div>
+                    <div class="local-info" id="local-produto"></div>
+                </div>
+
+                <div class="painel-lances">
+                    <div class="lance-atual-box">
+                        <div class="label">Lance Atual</div>
+                        <div class="valor" id="lance-atual-valor"></div>
+                        <div class="usuario" id="usuario-atual"></div>
+                    </div>
+
+                    <div class="lance-inicial-box">
+                        <div class="label">Lance Inicial</div>
+                        <div class="valor" id="lance-inicial-valor"></div>
+                    </div>
+
+                    <div class="opcoes-lance">
+                        <h3>Escolha seu lance</h3>
+                        <div class="grid-opcoes" id="grid-opcoes-lance"></div>
+                    </div>
+
+                    <div class="status-leilao">Aberto para Lances</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const numeroWhatsApp = "5541999999999";
+
+        const produtos = [
+            {
+                titulo: "Honda Biz 110i 2022",
+                lote: "Lote #1001",
+                lanceInicial: 800,
+                lanceAtual: 5300,
+                lanceMinimo: 100,
+                usuario: "José Silva",
+                local: "São Paulo, SP",
+                descricao: `
+<p><strong>Honda Biz 110i 2022/2022</strong></p>
+<p>Moto em bom estado, liga e dá partida normalmente.</p>
+
+<p><strong>Informações:</strong></p>
+<ul>
+    <li>Combustível: Gasolina</li>
+    <li>Quilometragem: 73.272 km</li>
+    <li>IPVA: Pago</li>
+    <li>Chaves: Com chave</li>
+    <li>Placa: J*****7</li>
+</ul>
+`,
+                fotos: ["biz1.png", "biz2.png", "biz3.png", "biz4.png", "biz5.png"],
+                opcoesLance: [100, 200, 500, 1000, 2000, 5300]
+            },
+            {
+                titulo: "Fiat Palio 2005",
+                lote: "Lote #1002",
+                lanceInicial: 2500,
+                lanceAtual: 19000,
+                lanceMinimo: 100,
+                usuario: "Maria Santos",
+                local: "Valinhos, SP",
+descricao: `
+<p><strong>Fiat Palio 2005</strong></p>
+<p>Veículo em bom estado de funcionamento, bom de andar.</p>
+
+<p><strong>Informações:</strong></p>
+<ul>
+    <li>Parte mecânica revisada (óleo, batentes, homocinética, entre outros)</li>
+    <li>IPVA: Pago</li>
+    <li>Chave canivete</li>
+    <li>Direção</li>
+    <li>Trava elétrica</li>
+</ul>
+`,
+                fotos: ["palio2019.png"],
+                opcoesLance: [200, 400, 600, 800, 1000, 1200, 1400, 1600]
+            },
+            {
+                titulo: "Fiat Palio",
+                lote: "Lote #1003",
+                lanceInicial: 500,
+                lanceAtual: 4300,
+                lanceMinimo: 100,
+                usuario: "Pedro Costa",
+                local: "Curitiba, PR",
+descricao: `
+<p><strong>Fiat Palio</strong></p>
+<p>Veículo vendido no estado em que se encontra, destinado a circulação.</p>
+
+<p><strong>Informações:</strong></p>
+<ul>
+    <li>Documento (DUT): Em mãos</li>
+    <li>Documentação: Aproximadamente R$ 3.000</li>
+    <li>IPVA: Pago</li>
+    <li>Mecânica em bom funcionamento</li>
+    <li>Motor em bom estado</li>
+    <li>Suspensão em boas condições</li>
+    <li>Pneus em bom estado</li>
+    <li>Parte elétrica funcionando</li>
+    <li>Marcador de combustível funcionando</li>
+    <li>Veículo bateu e pegou</li>
+    <li>Detalhe: Necessita reposição do vidro traseiro</li>
+    <li>Localização: Zona Leste – Aricanduva</li>
+</ul>
+`,
+                fotos: ["palio4300.png", "IMG-20260208-WA0009.png", "IMG-20260208-WA0010.jpg", "IMG-20260208-WA0011.jpg"],
+                opcoesLance: [1000, 2000, 5000, 10000, 15000, 20000]
+            },
+            {
+                titulo: "Chevrolet Corsa",
+                lote: "Lote #1004",
+                lanceInicial: 220000,
+                lanceAtual: 245000,
+                lanceMinimo: 100,
+                usuario: "Ana Paula",
+                local: "Porto Alegre, RS",
+                descricao: `
+<p><strong>Chevrolet Corsa Sedan Classic Life 1.0 Flexpower</strong></p>
+
+<p><strong>Dados do veículo:</strong></p>
+<ul>
+    <li>Marca: Chevrolet</li>
+    <li>Modelo: Corsa Sedan Classic Life 1.0 Flexpower</li>
+    <li>Ano: 2009</li>
+    <li>Quilometragem: 120.000 km</li>
+    <li>Motor: 1.0</li>
+    <li>Potência do motor: 1.0</li>
+    <li>Combustível: Álcool</li>
+    <li>Câmbio: Manual</li>
+    <li>IPVA: Pago</li>
+</ul>
+`,
+                fotos: ["chovelet1.png", "chovelet2.png", "chevelet3.png"],
+                opcoesLance: [1000, 2000, 5000, 10000, 15000, 20000]
+            },
+            {
+                titulo: "Caminhonete F350",
+                lote: "Lote #1005",
+                lanceInicial: 150000,
+                lanceAtual: 180000,
+                lanceMinimo: 100,
+                usuario: "Carlos Alberto",
+                local: "Florianópolis, SC",
+                descricao: `
+<p><strong>Caminhão</strong></p>
+<p>Veículo vendido no estado em que se encontra.</p>
+
+<p><strong>Informações:</strong></p>
+<ul>
+    <li>Ano: 2001</li>
+    <li>Combustível: Diesel</li>
+    <li>Câmbio: Manual</li>
+    <li>Direção: Hidráulica</li>
+    <li>Quilometragem: Não informada</li>
+    <li>Documentação e regularização: Não informada</li>
+</ul>
+`,
+                fotos: ["camionet.png", "camionet3.png", "camionet4.png", "camionet5.png", "camionet6.png", "camionet7.png"],
+                opcoesLance: [1000, 2000, 5000, 10000, 15000, 20000]
+            },
+            {
+                titulo: "Fiat Uno Vivace",
+                lote: "Lote #1006",
+                lanceInicial: 95000,
+                lanceAtual: 105000,
+                lanceMinimo: 100,
+                usuario: "Roberto Lima",
+                local: "São Paulo, SP",
+                descricao: `
+<p><strong>Fiat Uno Vivace/Rua 1.0 Evo Fire Flex 8V 5P</strong></p>
+<p>Veículo vendido no estado em que se encontra.</p>
+
+<p><strong>Informações:</strong></p>
+<ul>
+    <li>Marca: Fiat</li>
+    <li>Tipo de veículo: Hatch</li>
+    <li>Ano: 2014</li>
+    <li>Quilometragem: 137.000 km</li>
+    <li>Motor: 1.0</li>
+    <li>Combustível: Flex</li>
+</ul>
+`,
+                fotos: ["fiat.png", "fiat2.png", "fiat3.png", "fiat4.png", "fiat5.png", "fiat6.png", "fiat7.png"],
+                opcoesLance: [200, 400, 600, 800, 1000, 1200, 1400, 1600]
+            },
+            {
+                titulo: "Toyota Hilux CD SRV",
+                lote: "Lote #1007",
+                lanceInicial: 25000,
+                lanceAtual: 28500,
+                lanceMinimo: 100,
+                usuario: "Fernando Souza",
+                local: "Campinas, SP",
+                descricao: `
+<p><strong>Toyota Hilux CD SRV 4x4 2.8 TDI Diesel Automática</strong></p>
+<p>Veículo leiloado no estado em que se encontra.</p>
+
+<p><strong>Informações:</strong></p>
+<ul>
+    <li>Marca: Toyota</li>
+    <li>Tipo de veículo: Pick-up</li>
+    <li>Ano: 2020</li>
+    <li>Quilometragem: 73.000 km</li>
+    <li>Potência do motor: 2.8</li>
+    <li>Combustível: Diesel</li>
+</ul>
+`,
+                fotos: ["toyota.png", "toyota2.png", "toyota3.png", "toyota4.png", "toyota5.png", "toyota6.png", "toyota7.png", "toyota8.png", "toyota9.png", "toyota10.png"],
+                opcoesLance: [100, 200, 500, 1000, 2000, 3000]
+            },
+            {
+                titulo: "Trator John Deere 6300",
+                lote: "Lote #1008",
+                lanceInicial: 75000,
+                lanceAtual: 82000,
+                lanceMinimo: 100,
+                usuario: "Juliana Martins",
+                local: "Brasília, DF",
+                descricao: `
+<p><strong>Trator John Deere 6300</strong></p>
+<p>Veículo leiloado no estado em que se encontra.</p>
+
+<p><strong>Informações:</strong></p>
+<ul>
+    <li>Marca: John Deere</li>
+    <li>Modelo: 6300</li>
+    <li>Ano: 2004</li>
+    <li>Categoria: Trator agrícola</li>
+</ul>
+`,
+                fotos: ["trator.png", "trator2.png", "trator3.png", "trator4.png", "trator5.png"],
+                opcoesLance: [200, 400, 600, 800, 1000, 1200, 1400, 1600]
+            },
+            {
+                titulo: "Volkswagen Gol 1.0",
+                lote: "Lote #1009",
+                lanceInicial: 2500,
+                lanceAtual: 2850,
+                lanceMinimo: 100,
+                usuario: "Lucas Oliveira",
+                local: "Rio de Janeiro, RJ",
+                descricao: `
+<p><strong>Volkswagen Gol Geração IV Trend 1.0 8V MI Total Flex Mec. 2P</strong></p>
+<p>Veículo leiloado no estado em que se encontra.</p>
+
+<p><strong>Informações:</strong></p>
+<ul>
+    <li>Marca: Volkswagen</li>
+    <li>Tipo de veículo: Hatch</li>
+    <li>Ano: 2011</li>
+    <li>Quilometragem: 161.000 km</li>
+    <li>Motor: 1.0</li>
+    <li>Combustível: Flex</li>
+</ul>
+`,
+                fotos: ["gol.png", "gol2.png", "gol3.png", "gol4.png", "gol5.png", "gol6.png", "gol7.png", "gol8.png", "gol9.png", "gol10.png", "gol11.png"],
+                opcoesLance: [100, 200, 300, 400, 500, 1000]
+            },
+            {
+                titulo: "Fiat Strada Working 1.4",
+                lote: "Lote #1010",
+                lanceInicial: 4500,
+                lanceAtual: 5100,
+                lanceMinimo: 100,
+                usuario: "Patricia Alves",
+                local: "São Paulo, SP",
+                descricao: `
+<p><strong>Fiat Strada Working 1.4 MPI Fire Flex 8V CS</strong></p>
+<p>Veículo leiloado no estado em que se encontra.</p>
+
+<p><strong>Informações:</strong></p>
+<ul>
+    <li>Marca: Fiat</li>
+    <li>Tipo de veículo: Pick-up</li>
+    <li>Ano: 2016</li>
+    <li>Quilometragem: 128.000 km</li>
+    <li>Motor: 1.4</li>
+    <li>Combustível: Flex</li>
+</ul>
+`,
+                fotos: ["std.png", "std2.png", "std3.png", "std4.png", "std5.png", "std6.png", "std7.png", "std8.png", "std10.png"],
+                opcoesLance: [100, 200, 300, 400, 500, 1000]
+            },
+            {
+                titulo: "Hyundai GLS 1.8",
+                lote: "Lote #1011",
+                lanceInicial: 68000,
+                lanceAtual: 74000,
+                lanceMinimo: 100,
+                usuario: "Ricardo Nunes",
+                local: "Belo Horizonte, MG",
+                descricao: `
+<p><strong>Hyundai GLS 1.8 16V Automático</strong></p>
+<p>Veículo leiloado no estado em que se encontra.</p>
+
+<p><strong>Informações:</strong></p>
+<ul>
+    <li>Marca: Hyundai</li>
+    <li>Tipo de veículo: Sedã</li>
+    <li>Ano: 2013</li>
+    <li>Quilometragem: 210.000 km</li>
+    <li>Motor: 1.8</li>
+    <li>Combustível: Gasolina</li>
+</ul>
+`,
+                fotos: ["hudai.png", "hudai2.png", "hudai3.png", "hudai4.png", "hudai5.png"],
+                opcoesLance: [200, 400, 600, 800, 1000, 1200, 1400, 1600]
+            },
+            {
+                titulo: "Yamaha Factor 125i 2017",
+                lote: "Lote #1012",
+                lanceInicial: 35000,
+                lanceAtual: 38500,
+                lanceMinimo: 100,
+                usuario: "Marcelo Santos",
+                local: "Guarujá, SP",
+                descricao: `
+<p><strong>Yamaha 125i ED</strong></p>
+<p>Veículo leiloado no estado em que se encontra.</p>
+
+<p><strong>Informações:</strong></p>
+<ul>
+    <li>Marca: Yamaha</li>
+    <li>Modelo: 125i ED</li>
+    <li>Ano: 2017</li>
+    <li>Quilometragem: 50.000 km</li>
+    <li>Localização: Parque Fleixal – Guapimirim/RJ</li>
+</ul>
+`,
+                fotos: ["factor.png", "factor2.png", "factor3.png", "factor4.png", "factor5.png"],
+                opcoesLance: [100, 200, 500, 1000, 2000, 3000]
+            },
+            {
+                titulo: "Honda CG Titan",
+                lote: "Lote #1013",
+                lanceInicial: 28000,
+                lanceAtual: 30500,
+                lanceMinimo: 100,
+                usuario: "Gabriel Ferreira",
+                local: "Goiânia, GO",
+                descricao: `
+<p><strong>Honda CG 160 Titan FlexOne Edição Especial 40 Anos</strong></p>
+<p>Veículo leiloado no estado em que se encontra.</p>
+
+<p><strong>Informações:</strong></p>
+<ul>
+    <li>Marca: Honda</li>
+    <li>Ano: 2025</li>
+    <li>Quilometragem: 93 km</li>
+</ul>
+`,
+                fotos: ["honda.png", "honda2.png", "honda3.png", "honda4.png", "honda5.png", "honda6.png", "honda7.png", "honda8.png"],
+                opcoesLance: [100, 200, 500, 1000, 2000, 3000]
+            }
+        ];
+
+        let produtoAtual = null;
+
+        function criarCards() {
+            const grid = document.getElementById('grid-leiloes');
+            grid.innerHTML = '';
+
+            produtos.forEach((produto, index) => {
+                const card = document.createElement('div');
+                card.className = 'card-leilao';
+                card.onclick = () => abrirProduto(index);
+                
+                card.innerHTML = `
+                    <img src="${produto.fotos[0]}" alt="${produto.titulo}">
+                    <div class="card-info">
+                        <div class="lote">${produto.lote}</div>
+                        <h3>${produto.titulo}</h3>
+                        <div class="lance-inicial">R$ ${formatarMoeda(produto.lanceInicial)}</div>
+                        <div class="lance-minimo">Lance mínimo: R$ ${produto.lanceMinimo}</div>
+                        <div class="local">${produto.local}</div>
+                        <button class="btn-ver-leilao">Ver Leilão</button>
+                    </div>
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+
+        function abrirProduto(index) {
+            produtoAtual = produtos[index];
+            
+            document.getElementById('titulo-produto').textContent = produtoAtual.titulo;
+            document.getElementById('lote-produto').textContent = produtoAtual.lote;
+            document.getElementById('descricao-produto').innerHTML = produtoAtual.descricao;
+            document.getElementById('local-produto').textContent = 'Localização: ' + produtoAtual.local;
+            document.getElementById('lance-atual-valor').textContent = 'R$ ' + formatarMoeda(produtoAtual.lanceAtual);
+            document.getElementById('lance-inicial-valor').textContent = 'R$ ' + formatarMoeda(produtoAtual.lanceInicial);
+            document.getElementById('usuario-atual').textContent = 'Maior lance: ' + produtoAtual.usuario;
+            
+            criarGaleria(produtoAtual.fotos);
+            criarOpcoesLance(produtoAtual.opcoesLance);
+            
+            document.getElementById('pagina-produto').style.display = 'block';
+            document.getElementById('pagina-principal').style.display = 'none';
+            window.scrollTo(0, 0);
+        }
+
+        function criarGaleria(fotos) {
+            const fotoPrincipal = document.getElementById('foto-principal');
+            const miniaturas = document.getElementById('miniaturas');
+            
+            fotoPrincipal.src = fotos[0];
+            miniaturas.innerHTML = '';
+            
+            fotos.forEach((foto, index) => {
+                const miniatura = document.createElement('div');
+                miniatura.className = 'miniatura' + (index === 0 ? ' ativa' : '');
+                miniatura.innerHTML = `<img src="${foto}" alt="Foto ${index + 1}">`;
+                miniatura.onclick = () => {
+                    fotoPrincipal.src = foto;
+                    document.querySelectorAll('.miniatura').forEach(m => m.classList.remove('ativa'));
+                    miniatura.classList.add('ativa');
+                };
+                miniaturas.appendChild(miniatura);
+            });
+        }
+
+        function criarOpcoesLance(opcoes) {
+            const grid = document.getElementById('grid-opcoes-lance');
+            grid.innerHTML = '';
+            
+            opcoes.forEach(valor => {
+                const btn = document.createElement('button');
+                btn.className = 'btn-opcao-lance';
+                btn.textContent = `R$ ${valor}`;
+                btn.onclick = () => enviarLanceWhatsApp(valor);
+                grid.appendChild(btn);
+            });
+        }
+
+        function enviarLanceWhatsApp(valor) {
+            const mensagem = `Eu quero dar esse lance: ${produtoAtual.titulo} - ${valor}`;
+            const mensagemCodificada = encodeURIComponent(mensagem);
+            const urlWhatsApp = `https://wa.me/${numeroWhatsApp}?text=${mensagemCodificada}`;
+            window.open(urlWhatsApp, '_blank');
+        }
+
+        function voltarInicio() {
+            document.getElementById('pagina-produto').style.display = 'none';
+            document.getElementById('pagina-principal').style.display = 'block';
+            window.scrollTo(0, 0);
+        }
+
+        function formatarMoeda(valor) {
+            return valor.toLocaleString('pt-BR', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+
+        criarCards();
+    </script>
+</body>
+</html>
