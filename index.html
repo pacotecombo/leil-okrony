@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kron Leilões</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav>
+        <img src="logoKron2.png" alt="Kron Leilões">
+        <div id="menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+
+    <div id="pagina-principal">
+        <main class="container">
+            <header>
+                <img src="heder.png" alt="Banner Kron Leilões">
+            </header>
+
+            <h1 class="titulo-secao">Leilões em Destaque</h1>
+
+            <div id="grid-leiloes"></div>
+
+            <section class="faq-section">
+                <h2 class="faq-titulo">Perguntas Frequentes</h2>
+
+                <div class='question'>
+                    <input type='checkbox' id='question-1'>
+                    <label for='question-1'>Como funciona o nosso leilão?</label>
+                    <div class='answer'>
+                        O usuário escolhe o valor do lance que deseja dar e entra em contato com nosso suporte pelo WhatsApp. O suporte registra o lance no sistema e confirma para o usuário.
+                    </div>
+                </div>
+
+                <div class='question'>
+                    <input type='checkbox' id='question-2'>
+                    <label for='question-2'>Por que o lance é feito pelo suporte?</label>
+                    <div class='answer'>
+                        Esse modelo garante mais segurança, evita lances falsos e mantém o controle total do leilão em tempo real.
+                    </div>
+                </div>
+
+                <div class='question'>
+                    <input type='checkbox' id='question-3'>
+                    <label for='question-3'>Nosso leilão é confiável?</label>
+                    <div class='answer'>
+                        Sim. Todos os lances são registrados pelo suporte e ficam documentados, garantindo transparência para todos.
+                    </div>
+                </div>
+
+                <div class='question'>
+                    <input type='checkbox' id='question-4'>
+                    <label for='question-4'>Qual o prazo ideal do leilão?</label>
+                    <div class='answer'>
+                        O prazo recomendado é de 3 a 7 dias, tempo suficiente para gerar disputa e bons lances.
+                    </div>
+                </div>
+
+                <div class='question'>
+                    <input type='checkbox' id='question-5'>
+                    <label for='question-5'>O que acontece se eu ganhar o leilão?</label>
+                    <div class='answer'>
+                        O suporte entra em contato, passa as instruções de pagamento e acompanha todo o processo até a finalização.
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <img src="logoKron2.png" alt="Kron Leilões">
+            <p>Kron Leilões - Leilão Judicial e Extrajudicial Online de Veículos, Imóveis, Máquinas, Equipamentos, Bens Móveis e Bens Diversos.</p>
+            <p>2026 Kron Leilões - Rua Andre de Barros 226, 15º andar, Curitiba/PR</p>
+            <div class="links-footer">
+                <a href="#">Privacidade</a>
+                <a href="#">Segurança</a>
+                <a href="#">Cookies</a>
+            </div>
+        </footer>
+    </div>
+
+    <div id="pagina-produto">
+        <div class="header-produto">
+            <img src="logoKron2.png" alt="Kron Leilões" style="height: 42px;">
+            <button class="btn-voltar" onclick="voltarInicio()">← Voltar</button>
+        </div>
+
+        <div class="container-produto">
+            <div class="galeria-container">
+                <div class="foto-principal">
+                    <img id="foto-principal" src="" alt="Produto">
+                </div>
+                <div class="miniaturas" id="miniaturas"></div>
+            </div>
+
+            <div class="info-produto">
+                <div class="descricao-produto">
+                    <h1 id="titulo-produto"></h1>
+                    <div class="lote-info" id="lote-produto"></div>
+                    <div class="descricao-texto" id="descricao-produto"></div>
+                    <div class="local-info" id="local-produto"></div>
+                </div>
+
+                <div class="painel-lances">
+                    <div class="lance-atual-box">
+                        <div class="label">Lance Atual</div>
+                        <div class="valor" id="lance-atual-valor"></div>
+                        <div class="usuario" id="usuario-atual"></div>
+                    </div>
+
+                    <div class="lance-inicial-box">
+                        <div class="label">Lance Inicial</div>
+                        <div class="valor" id="lance-inicial-valor"></div>
+                    </div>
+
+                    <div class="opcoes-lance">
+                        <h3>Escolha seu lance</h3>
+                        <div class="grid-opcoes" id="grid-opcoes-lance"></div>
+                    </div>
+
+                    <div class="status-leilao">Aberto para Lances</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
